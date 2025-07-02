@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>Minhas Reservas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="TRSOFT_20novo.png" alt="TRSoft Logo" />
+    </div>
+    <h1>Consultar Reservas</h1>
+  </header>
+
+  <main class="container">
+    <h2>Procurar por nome</h2>
+    <input type="text" id="nomeBusca" placeholder="Digite seu nome completo">
+    <button onclick="buscarReservas()">Ver Reservas</button>
+
+    <div id="resultadoReservas" style="margin-top: 20px;"></div>
+  </main>
+
+  <script>
+    const urlScript = "URL_DO_TEU_SCRIPT"; // Substitui pela tua URL do Apps Script
+
+    function buscarReservas() {
+      const nome = document.getElementById("nomeBusca").value.trim();
+      if (!nome) {
+        alert("Insira o nome para buscar.");
+        return;
+      }
+
+      const params = new URLSearchParams();
+      params.append("action", "getReservas");
+      params.append("nome", nome);
+
+      fetch(`${urlScript}?${params.toString()}`, { method: "POST" })
+        .then(res => res.json())
+        .then(dados => {
+          const div = document.getElementById("resultadoReservas");
+          if (dados.length === 0) {
+            div.innerHTML = "<p>Nenhuma reserva encontrada.</p>";
+          } else {
+            let html = "<ul>";
+            dados.forEach(r => {
+              html += `<li><strong>${r.Data}</strong>: ${r.Prato} (${r.Observações || "sem observações"})</li>`;
+            });
+            html += "</ul>";
+            div.innerHTML = html;
+          }
+        });
+    }
+  </script>
+</body>
+</html>
